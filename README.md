@@ -14,8 +14,8 @@ Na displeji sa tiež zobrazuje dátum a čas, ktorý sa nastavuje cez PC. PC kom
 Dotykovou plochou je možné prepínať jednotlivé obrazovky grafického rozhrania. Obrazovky je možné prepínať aj cez PC.
 
 Úlohy a rozdelenie:
-- čítanie, formátovanie a spracovanie dát zo senzorov cez I2C - (Sebastián)
-- ovládanie a nastavovanie aplikácie cez PC komunikácia cez USART - (Tadeáš)
-- komunikácia s displejom a dotykovou plochou cez SPI - (Tomáš)
-- grafické rozhranie, vykreslovanie údajov a objektov - (Laura)
+- čítanie, formátovanie a spracovanie dát zo senzorov cez I2C - (Sebastián Bodor)
+- ovládanie a nastavovanie aplikácie cez PC komunikácia cez USART - (Tadeáš Kapina)
+- komunikácia s displejom a dotykovou plochou cez SPI - (Tomáš Krajmer)
+- grafické rozhranie, vykreslovanie údajov a objektov - (Laura Gavendová)
 
