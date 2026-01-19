@@ -84,6 +84,7 @@ void Error_Handler(void);
 int16_t pressure;
 extern int8_t screen_index;*/
 extern int8_t screen_status;
+extern int8_t butonCounter;
 
 /* USER CODE END Private defines */
 

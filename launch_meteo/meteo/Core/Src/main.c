@@ -21,6 +21,7 @@
 #include "dma.h"
 #include "i2c.h"
 #include "spi.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -54,6 +55,7 @@ int16_t temperature = 853;
 int16_t pressure = 111;
 int8_t screen_index = 0;
 int8_t screen_status = 0;
+int8_t butonCounter = 0;
 char string_buf[7];
 /* USER CODE END PV */
 
@@ -101,6 +103,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI1_Init();
   MX_I2C1_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
   HAL_Delay(10);
   ILI9341_Init();
@@ -140,10 +143,10 @@ int main(void)
 		  screen_status = 0;
 	  }
 
-	  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+	  /*HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 	  HAL_Delay(500);
 	  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-	  HAL_Delay(500);
+	  HAL_Delay(500);*/
 
   }
   /* USER CODE END 3 */
