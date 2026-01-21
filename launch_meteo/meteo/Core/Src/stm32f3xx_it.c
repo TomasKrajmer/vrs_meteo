@@ -41,12 +41,12 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+int8_t led_status = 0;
+int8_t tick_counter = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -58,6 +58,7 @@
 extern DMA_HandleTypeDef hdma_i2c1_rx;
 extern DMA_HandleTypeDef hdma_i2c1_tx;
 extern DMA_HandleTypeDef hdma_spi1_tx;
+extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim7;
 /* USER CODE BEGIN EV */
 
@@ -259,6 +260,33 @@ void DMA1_Channel5_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles TIM6 global and DAC1 underrun error interrupts.
+  */
+void TIM6_DAC1_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM6_DAC1_IRQn 0 */
+
+  /* USER CODE END TIM6_DAC1_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim6);
+  /* USER CODE BEGIN TIM6_DAC1_IRQn 1 */
+  	  tick_counter++;
+
+  	  if (led_status) {
+  		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+  		led_status = 0;
+  	  }
+  	  else {
+  		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+  		led_status = 1;
+  	  }
+  	  if (tick_counter > 4) {
+  		  screen_tick = 1;
+  		  tick_counter = 0;
+  	  }
+  /* USER CODE END TIM6_DAC1_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM7 global and DAC2 underrun error interrupts.
   */
 void TIM7_DAC2_IRQHandler(void)
@@ -280,10 +308,10 @@ void TIM7_DAC2_IRQHandler(void)
   else {
 	  HAL_TIM_Base_Stop_IT(&htim7);
 
-	  if(butonCounter >= 300) {
-		  mode = SET;
+	  if(butonCounter >= 245) {
+		  mode ^= 1;
       }
-	  if(butonCounter > 20 && butonCounter < 300) {
+	  if(butonCounter > 20 && butonCounter < 245) {
 		  screen_status = SET;
 	  }
 	  butonCounter = 0;

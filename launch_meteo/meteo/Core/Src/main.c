@@ -55,6 +55,7 @@ int16_t temperature = 853;
 int16_t pressure = 111;
 int8_t screen_index = 0;
 int8_t screen_status = 0;
+int8_t screen_tick = 0;
 int32_t butonCounter = 0;
 int8_t mode = 0;
 char string_buf[7];
@@ -105,6 +106,7 @@ int main(void)
   MX_SPI1_Init();
   MX_I2C1_Init();
   MX_TIM7_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
   HAL_Delay(10);
   ILI9341_Init();
@@ -112,9 +114,11 @@ int main(void)
 
   ILI9341_FillScreen(BLACK); //fill whole screen with black color
 
+  HAL_TIM_Base_Start_IT(&htim6);
+
 
   //test printout
-  ILI9341_DrawRectangle(0, 0, 320, 30, BLUE);
+  /*ILI9341_DrawRectangle(0, 0, 320, 30, BLUE);
   ILI9341_DrawText("WEATHER STATION", FONT4, 60, 8, WHITE, BLUE);
 
     ILI9341_DrawHollowRectangleCoord(10, 40, 310, 75, WHITE);
@@ -126,7 +130,7 @@ int main(void)
   	ILI9341_DrawText("Pressure:           kPa", FONT4, 50, 95, WHITE, BLACK);
   	digit3_to_ascii(pressure, string_buf);
   	ILI9341_DrawText(string_buf, FONT4, 190, 95, WHITE, BLACK);
-
+*/
 
   /* USER CODE END 2 */
 
@@ -137,12 +141,49 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+if (mode == 0) {
 	  if (screen_status) {
+		  if (screen_index >= 3) {
+			  screen_index = 0;
+		  }
+		  if (screen_index == 0) {
+			  ILI9341_FillScreen(BLUE);
+		  }
+		  else if (screen_index == 1) {
+			  ILI9341_FillScreen(RED);
+		  }
+		  else if (screen_index == 2) {
+			  ILI9341_FillScreen(WHITE);
+		  }
+		  screen_status = 0;
+		  screen_index++;
+	  }
+}
+if (mode == 1) {
+	if (screen_tick) {
+		if (screen_index >= 3) {
+			screen_index = 0;
+		}
+		if (screen_index == 0) {
+		    ILI9341_FillScreen(BLUE);
+		}
+		else if (screen_index == 1) {
+		    ILI9341_FillScreen(RED);
+		}
+		else if (screen_index == 2) {
+		    ILI9341_FillScreen(WHITE);
+		}
+		screen_tick = 0;
+		screen_index++;
+	}
+}
+	  /*if (screen_status) {
 		  pressure++;
 		  digit3_to_ascii(pressure, string_buf);
 		  ILI9341_DrawText(string_buf, FONT4, 190, 95, WHITE, BLACK);
 		  screen_status = 0;
-	  }
+	  }*/
+
 
 	  /*HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 	  HAL_Delay(500);
