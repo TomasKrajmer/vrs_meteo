@@ -59,12 +59,15 @@ int8_t screen_tick = 0;
 int32_t butonCounter = 0;
 int8_t mode = 0;
 char string_buf[7];
+
+uint8_t date_buff[6];
+uint8_t date_changemask = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+int USART_ReadTime();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -107,6 +110,7 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM7_Init();
   MX_TIM6_Init();
+  MX_TIM16_Init();
   /* USER CODE BEGIN 2 */
   HAL_Delay(10);
   ILI9341_Init();
@@ -115,6 +119,13 @@ int main(void)
   ILI9341_FillScreen(BLACK); //fill whole screen with black color
 
   HAL_TIM_Base_Start_IT(&htim6);
+
+  // ziskame hodnotu casu
+
+  USART_ReadTime(date_buff);
+
+
+  HAL_TIM_Base_Start_IT(&htim16);
 
 
   //test printout
@@ -238,6 +249,54 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+
+int USART_ReadTime(uint8_t* read_buff){
+  uint8_t msg[] = "get\0";
+
+  HAL_UART_Transmit(&huart2, msg, sizeof(msg) - 1, HAL_MAX_DELAY);
+  uint8_t rx;
+
+  uint8_t i = 0;
+  while(i < 6){
+    HAL_UART_Receive(&huart2, &rx, 1, HAL_MAX_DELAY);
+	read_buff[i] = rx;
+	i++;
+  }
+}
+
+
+// time increase
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
+
+	if(htim == &htim16){
+		HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+
+
+		date_buff[2]++;
+		date_changemask |= 0x8;
+		if(date_buff[2] > 59){
+			date_buff[2] = 0;
+			date_buff[1]++;
+			date_changemask |= 0x10;
+		}
+
+		if(date_buff[1] > 59){
+			date_buff[1] = 0;
+			date_buff[0]++;
+			date_changemask |= 0x20;
+		}
+
+		char buff[20];
+		uint16_t year = 1900;
+		year += date_buff[5];
+
+		sprintf(buff, "%02d:%02d:%02d %02d.%02d.%04d", date_buff[0],date_buff[1],date_buff[2],date_buff[3],date_buff[4],year);
+		HAL_UART_Transmit(&huart2, buff, sizeof(buff) - 1, HAL_MAX_DELAY);
+	}
+}
+
+
 
 /* USER CODE END 4 */
 
